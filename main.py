@@ -2,7 +2,7 @@
 
 from datetime import datetime, timedelta
 from model import modelConstituency
-from cmd.cmd import cmd
+from command.cmd import cmd
 from utils.corpus import Corpus
 from utils.data import TextDataset, batchify
 from utils.metric import Metric
@@ -57,7 +57,7 @@ class trainModel(cmd):
               f"{len(train.buckets)} buckets")
 
         print("Create the model")
-        self.model = modelConstituency(args)
+        self.model = modelConstituency(args).loadPretrained(self.words.embed)
         print(f"{self.model}\n")
         self.model = self.model.to(args.device)
         if torch.cuda.device_count() > 1:
@@ -104,10 +104,10 @@ class trainModel(cmd):
         print(f"average time of each epoch is {total_time / epoch}s")
         print(f"{total_time}s elapsed")
 
-implementar o parser de constituencia
-https://github.com/yzhangcs/crfpar/tree/crf-constituency
+#implementar o parser de constituencia
+#https://github.com/yzhangcs/crfpar/tree/crf-constituency
 
 
-https://github.com/yzhangcs/parser
+#https://github.com/yzhangcs/parser
 
-https://github.com/yzhangcs/parser/blob/main/EXAMPLES.md
+#https://github.com/yzhangcs/parser/blob/main/EXAMPLES.md

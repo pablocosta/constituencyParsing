@@ -97,3 +97,31 @@ class modelConstituency(torch.nn.Module):
         sLabel = self.labelAttn(labelL, labelR).permute(0, 2, 3, 1)
 
         return sSpan, sLabel
+    def loadPretrained(self, embed=None):
+        if embed is not None:
+            self.preTrained = torch.nn.Embedding.from_pretrained(embed)
+            torch.nn.init.xavier_normal_(self.wordEmbed.weight)
+
+        return self
+    
+    @classmethod
+    def load(cls, path):
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        state = torch.load(path, map_location=device)
+        model = cls(state['args'])
+        model.loadPretrained(state['preTrained'])
+        model.load_state_dict(state['stateDict'], False)
+        model.to(device)
+
+        return model
+
+    def save(self, path):
+        stateDict, preTrained = self.state_dict(), None
+        if hasattr(self, 'pretrained'):
+            pretrained = stateDict.pop('pretrained.weight')
+        state = {
+            'args': self.args,
+            'state_dict': stateDict,
+            'pretrained': preTrained
+        }
+        torch.save(state, path)
